@@ -40,6 +40,8 @@ public final class Operator {
     private SaveMethod currentSaveMethod;
     private byte[] currentImageData;
     
+    private final com.jogjadamai.infest.service.ProgramPropertiesManager programPropertiesManager;
+    
     private enum SaveMethod {
         INSERT, UPDATE
     }
@@ -53,6 +55,7 @@ public final class Operator {
     private Operator() {
         this.initialiseConnection();
         this.activeFrame = ViewFrame.SIGN_IN;
+        this.programPropertiesManager = com.jogjadamai.infest.service.ProgramPropertiesManager.getInstance();
     }
     
     protected static Operator getInstance() {
@@ -63,12 +66,13 @@ public final class Operator {
     private void initialiseConnection() {
         String serverAddress = null;
         try {
-            serverAddress = com.jogjadamai.infest.service.ConfigurationReader.getConfiguration("serveraddress");
+            serverAddress = programPropertiesManager.getProperty("serveraddress");
         } catch (java.lang.NullPointerException ex) {
             System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to load configuration files!\n\n"
-                    + "Please verify that the configuration file needed for Infest Application to run\n"
-                    + "is exist in the working directory and is properly configured.", "INFEST: Configuration File", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(mainFrame, "Infest Configuration File is miss-configured!\n\n"
+                    + "Please verify that the Infest Configuration File (infest.conf) is exist in the current\n"
+                    + "working directory and is properly configured. Any wrong setting or modification of\n"
+                    + "Infest Configuration File would cause this error.", "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
             fatalExit(-1);
         }
         try {
@@ -166,19 +170,51 @@ public final class Operator {
                     + "network connection is working.",
                     "INFEST: Maintenance Mode", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
-            String password = "";
-            for (char character : signInFrame.passwordField.getPassword()) {
-                password = password + character;
+            com.jogjadamai.infest.communication.Credential inputCred = new com.jogjadamai.infest.communication.Credential(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword());
+            try {
+                String salt = null;
+                salt = this.programPropertiesManager.getProperty("salt");
+                try {
+                    inputCred.encrpyt(salt);
+                } catch (java.security.NoSuchAlgorithmException 
+                        | java.security.spec.InvalidKeySpecException 
+                        | javax.crypto.NoSuchPaddingException 
+                        | java.security.InvalidKeyException 
+                        | java.security.spec.InvalidParameterSpecException 
+                        | java.io.UnsupportedEncodingException 
+                        | javax.crypto.IllegalBlockSizeException 
+                        | javax.crypto.BadPaddingException ex) {
+                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to encrypt credentials!\n\n"
+                        + "Please contact an Infest Administrator for furhter help.", 
+                        "INFEST: Encryption Service", javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NullPointerException ex) {
+                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Infest Configuration File is miss-configured!\n\n"
+                        + "Please verify that the Infest Configuration File (infest.conf) is exist in the current\n"
+                        + "working directory and is properly configured. Any wrong setting or modification of\n"
+                        + "Infest Configuration File would cause this error.", 
+                        "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
+                fatalExit(-1);
             }
-            Integer[] securityNumber = {
-                java.util.Arrays.hashCode(signInFrame.usernameField.getText().getBytes()), 
-                java.util.Arrays.hashCode(password.getBytes())
-            };
-            if(Program.authenticate(securityNumber)) {
-                signInFrame.setVisible(false);
-                activeFrame = ViewFrame.MAIN;
+            com.jogjadamai.infest.communication.Credential savedCred = null;
+            try {    
+                savedCred = this.protocolServer.getCredential(protocolClient);
+            } catch (java.rmi.RemoteException ex) {
+                savedCred = new com.jogjadamai.infest.communication.Credential("", new char[0]);System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Infest API Server is unable to run!\n\n"
+                    + "Program error detected.", "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                fatalExit(-1);
+            }
+            if(savedCred.equals(inputCred)) {
+                mainFrame.setVisible(false);
             } else {
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to authenticate user!\n\nEither username or password is wrong. Please try again.", "INFEST: Authentication System", javax.swing.JOptionPane.ERROR_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+                        "Sign In Failed!\n\n"
+                        + "Either username or password is wrong, or your\n"
+                        + "Infest Configuration File is miss-configured.", 
+                        "INFEST: Authentication System", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
     }
