@@ -212,24 +212,24 @@ public final class Operator {
             currentSaveMethod = SaveMethod.UPDATE;
             switch(card) {
                 case WELCOME:
-                    mainFrame.titleLabel.setText("operator panel");
+                    mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/OperatorPanelLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "welcomeCard");
                     break;
                 case MENUS:
-                    mainFrame.titleLabel.setText("menu management");
+                    mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/MenuManagementLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel >> Menu Management");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "manageMenusCard");
                     this.readAll(card);
                     break;
                 case TABLES:
-                    mainFrame.titleLabel.setText("table management");
+                    mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/TableManagementLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel >> Table Management");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "manageTablesCard");
                     this.readAll(card);
                     break;
                 case FINANCIAL_STATEMENT:
-                    mainFrame.titleLabel.setText("financial statement");
+                    mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/FinancialStatementLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel >> Financial Statement");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "financialStatementCard");
                     if(!isStatementGeneratorActive()) {

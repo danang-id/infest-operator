@@ -39,46 +39,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         }
         initComponents();
     }
-//
-//    public static BufferedImage resizeImage(BufferedImage originalImage, int type) {
-//        
-//        BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
-//        Graphics2D g = resizedImage.createGraphics();
-//        g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
-//        g.dispose();
-// 
-//        return resizedImage;
-//    }
-//    
-//    public byte[] resizeImage(int type) throws IOException{
-//        InputStream in = new ByteArrayInputStream(menu.getImage());
-//	BufferedImage bImageFromConvert = ImageIO.read(in);
-//        BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
-////        bImageFromConvert.
-////        bImageFromConvert = new BufferedImage
-//        Graphics2D g = resizedImage.createGraphics();
-//        g.drawImage(bImageFromConvert, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
-//        g.dispose();
-//         return menu.getImage();
-//    }
-//    
-//     public Image toImage(BufferedImage bufferedImage) {
-//        return Toolkit.getDefaultToolkit().createImage(bufferedImage.getSource());
-//    }
-//    
-//    public byte[] insertImage() throws IOException{
-////        byte[] extractBytes;
-//        
-//                BufferedImage originalImage = ImageIO.read(image);
-//                byteArrayOutputStream = new ByteArrayOutputStream();
-//                ImageIO.write(originalImage, "jpg", byteArrayOutputStream);
-//                
-//                byteArrayOutputStream.close();
-//                
-//            
-//        return byteArrayOutputStream.toByteArray();
-//    }
-    
     /**
      * This method is called from within the constructor to initialise the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -221,7 +181,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         titleLabel.setFont(new java.awt.Font("Intro Head R Base", 0, 36)); // NOI18N
         titleLabel.setForeground(new java.awt.Color(101, 17, 18));
         titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        titleLabel.setText("{titleLabel}");
         titleLabel.setToolTipText("");
         titleLabel.setDoubleBuffered(true);
 
@@ -749,20 +708,19 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                     .addComponent(tableNameField)
                     .addComponent(saveChangesTableButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(tableDescriptionScrollPane)
-                    .addGroup(manageTablesLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(manageTablesLeftPanelLayout.createSequentialGroup()
-                            .addComponent(tableIDLabel)
-                            .addGap(10, 10, 10)
-                            .addComponent(tableIDField))
-                        .addGroup(manageTablesLeftPanelLayout.createSequentialGroup()
-                            .addGroup(manageTablesLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(tableNameLabel)
-                                .addComponent(tableDescriptionLabel)
-                                .addGroup(manageTablesLeftPanelLayout.createSequentialGroup()
-                                    .addComponent(newTableButton)
-                                    .addGap(69, 69, 69)
-                                    .addComponent(deleteTableButton)))
-                            .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(manageTablesLeftPanelLayout.createSequentialGroup()
+                        .addComponent(tableIDLabel)
+                        .addGap(10, 10, 10)
+                        .addComponent(tableIDField))
+                    .addGroup(manageTablesLeftPanelLayout.createSequentialGroup()
+                        .addGroup(manageTablesLeftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tableNameLabel)
+                            .addComponent(tableDescriptionLabel)
+                            .addGroup(manageTablesLeftPanelLayout.createSequentialGroup()
+                                .addComponent(newTableButton)
+                                .addGap(69, 69, 69)
+                                .addComponent(deleteTableButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         manageTablesLeftPanelLayout.setVerticalGroup(
