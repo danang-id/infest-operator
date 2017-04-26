@@ -32,10 +32,6 @@ public final class Program {
     private static Runnable MainGUI, SignInGUI;
     private static Thread MainGUIThread, SignInGUIThread;
     
-    private static final Integer[] SECURITY_NUMBER = {
-        390895594, 179331562
-    };
-    
     public static void main(String[] args) {
         Program.MainGUI = new MainGUI();
         Program.SignInGUI = new SignInGUI();
@@ -46,15 +42,6 @@ public final class Program {
     
     protected static void showSignInGUI() {
         java.awt.EventQueue.invokeLater(Program.SignInGUIThread);
-    }
-    
-    protected static Boolean authenticate(Integer[] securityNumber){
-        if (java.util.Arrays.equals(securityNumber, Program.SECURITY_NUMBER)) {
-            java.awt.EventQueue.invokeLater(Program.MainGUIThread);
-            return true;
-        } else {
-            return false;
-        }
     }
     
 }

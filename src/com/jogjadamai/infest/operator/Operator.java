@@ -208,7 +208,9 @@ public final class Operator {
                 fatalExit(-1);
             }
             if(savedCred.equals(inputCred)) {
-                mainFrame.setVisible(false);
+                signInFrame.setVisible(false);
+                mainFrame.setVisible(true);
+                activeFrame = ViewFrame.MAIN;
             } else {
                 javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
                         "Sign In Failed!\n\n"
