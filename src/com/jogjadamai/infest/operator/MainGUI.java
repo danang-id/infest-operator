@@ -322,12 +322,12 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         minutesLabel.setText("minute(s)");
         minutesLabel.setDoubleBuffered(true);
 
-        menuStockField.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        menuStockField.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
         menuStockField.setToolTipText("Set the stock of the menu (in unit(s)).");
         menuStockField.setDoubleBuffered(true);
         menuStockField.setEnabled(false);
 
-        menuDurationField.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        menuDurationField.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
         menuDurationField.setToolTipText("Set the duration of the menu to be cooked (in minute(s)).");
         menuDurationField.setDoubleBuffered(true);
         menuDurationField.setEnabled(false);
@@ -554,6 +554,11 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                 menusTableMouseClicked(evt);
             }
         });
+        menusTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                menusTableKeyReleased(evt);
+            }
+        });
         menusTableScrollPane.setViewportView(menusTable);
 
         searchMenusField.setToolTipText("Type the seach terms...");
@@ -775,9 +780,14 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                 tablesTableMouseClicked(evt);
             }
         });
+        tablesTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tablesTableKeyReleased(evt);
+            }
+        });
         tablesTableScrollPane.setViewportView(tablesTable);
 
-        searchTablesButton.setText("Search Menus");
+        searchTablesButton.setText("Search Tables");
         searchTablesButton.setToolTipText("");
         searchTablesButton.setDoubleBuffered(true);
         searchTablesButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1256,6 +1266,14 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     private void menuImageIconLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuImageIconLabelMouseReleased
         operator.displayPopupMenu(evt);
     }//GEN-LAST:event_menuImageIconLabelMouseReleased
+
+    private void tablesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablesTableKeyReleased
+        operator.loadFields(CardList.TABLES);
+    }//GEN-LAST:event_tablesTableKeyReleased
+
+    private void menusTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_menusTableKeyReleased
+        operator.loadFields(CardList.MENUS);
+    }//GEN-LAST:event_menusTableKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JMenuItem changeImageMenuItem;

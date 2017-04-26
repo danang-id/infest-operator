@@ -1023,6 +1023,7 @@
                       </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menusTableMouseClicked"/>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="menusTableKeyReleased"/>
                       </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -1361,6 +1362,7 @@
                       </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tablesTableMouseClicked"/>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tablesTableKeyReleased"/>
                       </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -1370,7 +1372,7 @@
                 </Container>
                 <Component class="javax.swing.JButton" name="searchTablesButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Search Menus"/>
+                    <Property name="text" type="java.lang.String" value="Search Tables"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                     <Property name="doubleBuffered" type="boolean" value="true"/>
                   </Properties>
