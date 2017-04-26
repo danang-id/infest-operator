@@ -38,12 +38,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
             java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         initComponents();
-        initialiseController();
-    }
-    
-    private void initialiseController() {
-        operator = com.jogjadamai.infest.operator.Operator.getInstance();
-        operator.setMainFrame(this);
     }
     
     /**
@@ -1376,10 +1370,10 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     
     @Override
     public void run() {
+        operator = com.jogjadamai.infest.operator.Operator.getInstance();
         operator.switchCard(CardList.WELCOME);
         getContentPane().setBackground(new java.awt.Color(0xffffff));
         setLocationRelativeTo(null);
-        setVisible(true);
     }
     
     protected java.awt.CardLayout getCardLayout() {

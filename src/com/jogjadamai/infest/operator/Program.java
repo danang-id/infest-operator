@@ -29,16 +29,21 @@ package com.jogjadamai.infest.operator;
 
 public final class Program {
     
-    private static Runnable MainGUI, SignInGUI;
-    private static Thread MainGUIThread, SignInGUIThread;
+    private static SignInGUI SignInGUI;
+    private static MainGUI MainGUI;
+    private static Thread SignInThread, MainThread;
+    private static Operator Controller;
     
     public static void main(String[] args) {
-        Program.MainGUI = new MainGUI();
+        Program.Controller = Operator.getInstance();
         Program.SignInGUI = new SignInGUI();
-        Program.MainGUIThread = new Thread(Program.MainGUI);
-        Program.SignInGUIThread = new Thread(Program.SignInGUI);
-        java.awt.EventQueue.invokeLater(Program.MainGUIThread);
-        java.awt.EventQueue.invokeLater(Program.SignInGUIThread);
+        Program.MainGUI = new MainGUI();
+        Program.Controller.setSignInFrame(Program.SignInGUI);
+        Program.Controller.setMainFrame(Program.MainGUI);
+        Program.SignInThread = new Thread(Program.SignInGUI);
+        Program.MainThread = new Thread(Program.MainGUI);
+        java.awt.EventQueue.invokeLater(Program.SignInThread);
+        java.awt.EventQueue.invokeLater(Program.MainThread);
     }
     
 }
