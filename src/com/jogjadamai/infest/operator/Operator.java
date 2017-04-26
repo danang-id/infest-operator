@@ -170,41 +170,38 @@ public final class Operator {
                     + "network connection is working.",
                     "INFEST: Maintenance Mode", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
+            com.jogjadamai.infest.communication.Credentials savedCred = null;
+            try {    
+                savedCred = this.protocolServer.getCredentials(protocolClient);
+            } catch (java.rmi.RemoteException ex) {
+                savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);
+                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+                        "Infest API Server is unable to run!\n\n"
+                        + "Program error detected.", "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                fatalExit(-1);
+            }
             com.jogjadamai.infest.communication.Credentials inputCred = new com.jogjadamai.infest.communication.Credentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword());
             try {
                 String salt = null;
                 salt = this.programPropertiesManager.getProperty("salt");
                 try {
                     inputCred.encrpyt(salt);
-                } catch (java.security.NoSuchAlgorithmException 
-                        | java.security.spec.InvalidKeySpecException 
-                        | javax.crypto.NoSuchPaddingException 
-                        | java.security.InvalidKeyException 
-                        | java.security.spec.InvalidParameterSpecException 
-                        | java.io.UnsupportedEncodingException 
-                        | javax.crypto.IllegalBlockSizeException 
-                        | javax.crypto.BadPaddingException ex) {
+                } catch (Exception ex) {
                 System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to encrypt credentials!\n\n"
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
+                        "Failed to encrypt credentials!\n\n"
                         + "Please contact an Infest Administrator for furhter help.", 
                         "INFEST: Encryption Service", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NullPointerException ex) {
                 System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Infest Configuration File is miss-configured!\n\n"
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+                        "Infest Configuration File is miss-configured!\n\n"
                         + "Please verify that the Infest Configuration File (infest.conf) is exist in the current\n"
                         + "working directory and is properly configured. Any wrong setting or modification of\n"
                         + "Infest Configuration File would cause this error.", 
                         "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
-                fatalExit(-1);
-            }
-            com.jogjadamai.infest.communication.Credentials savedCred = null;
-            try {    
-                savedCred = this.protocolServer.getCredentials(protocolClient);
-            } catch (java.rmi.RemoteException ex) {
-                savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Infest API Server is unable to run!\n\n"
-                    + "Program error detected.", "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 fatalExit(-1);
             }
             if(savedCred.equals(inputCred)) {
@@ -389,10 +386,17 @@ public final class Operator {
                         java.util.List<com.jogjadamai.infest.entity.Tables> allTables = protocolServer.readAllTable(protocolClient);
                         java.util.List<com.jogjadamai.infest.entity.Tables> requestedTables = new java.util.ArrayList<>();
                         for(com.jogjadamai.infest.entity.Tables table : allTables) {
-                            if( String.valueOf(table.getId()).toLowerCase().contains(mainFrame.searchTablesField.getText().toLowerCase()) | 
+                            if(mainFrame.searchTablesField.getText().trim().isEmpty()){
+                                if(table.getStatus()==1){
+                                    requestedTables.add(table);
+                                }
+                            }
+                            else if( String.valueOf(table.getId()).toLowerCase().contains(mainFrame.searchTablesField.getText().toLowerCase()) | 
                                     table.getName().toLowerCase().contains(mainFrame.searchTablesField.getText().toLowerCase()) |
                                     table.getDescription().toLowerCase().contains(mainFrame.searchTablesField.getText().toLowerCase()) ) {
-                                requestedTables.add(table);
+                                if(table.getStatus()==1){
+                                    requestedTables.add(table);
+                                }
                             }
                         }
                         loadedTable = requestedTables;
@@ -792,7 +796,7 @@ public final class Operator {
                                     menu = protocolServer.readMenu(protocolClient, Integer.parseInt(mainFrame.menuIDField.getText()));
                                     break;
                                 case TABLES:
-                                    table = protocolServer.readTable(protocolClient, Integer.parseInt(mainFrame.menuIDField.getText()));
+                                    table = protocolServer.readTable(protocolClient, Integer.parseInt(mainFrame.tableIDField.getText()));
                                     break;
                             }
                         } catch (java.rmi.RemoteException ex) {
