@@ -53,9 +53,9 @@ public final class Operator {
     private static Operator INSTANCE;
     
     private Operator() {
+        this.programPropertiesManager = com.jogjadamai.infest.service.ProgramPropertiesManager.getInstance();
         this.initialiseConnection();
         this.activeFrame = ViewFrame.SIGN_IN;
-        this.programPropertiesManager = com.jogjadamai.infest.service.ProgramPropertiesManager.getInstance();
     }
     
     protected static Operator getInstance() {
@@ -170,7 +170,7 @@ public final class Operator {
                     + "network connection is working.",
                     "INFEST: Maintenance Mode", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
-            com.jogjadamai.infest.communication.Credential inputCred = new com.jogjadamai.infest.communication.Credential(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword());
+            com.jogjadamai.infest.communication.Credentials inputCred = new com.jogjadamai.infest.communication.Credentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword());
             try {
                 String salt = null;
                 salt = this.programPropertiesManager.getProperty("salt");
@@ -198,11 +198,11 @@ public final class Operator {
                         "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
                 fatalExit(-1);
             }
-            com.jogjadamai.infest.communication.Credential savedCred = null;
+            com.jogjadamai.infest.communication.Credentials savedCred = null;
             try {    
-                savedCred = this.protocolServer.getCredential(protocolClient);
+                savedCred = this.protocolServer.getCredentials(protocolClient);
             } catch (java.rmi.RemoteException ex) {
-                savedCred = new com.jogjadamai.infest.communication.Credential("", new char[0]);System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                 javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Infest API Server is unable to run!\n\n"
                     + "Program error detected.", "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 fatalExit(-1);
