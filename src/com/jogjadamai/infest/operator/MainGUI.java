@@ -38,7 +38,14 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
             java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         initComponents();
+        initialiseController();
     }
+    
+    private void initialiseController() {
+        operator = com.jogjadamai.infest.operator.Operator.getInstance();
+        operator.setMainFrame(this);
+    }
+    
     /**
      * This method is called from within the constructor to initialise the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -322,12 +329,12 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         minutesLabel.setText("minute(s)");
         minutesLabel.setDoubleBuffered(true);
 
-        menuStockField.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+        menuStockField.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         menuStockField.setToolTipText("Set the stock of the menu (in unit(s)).");
         menuStockField.setDoubleBuffered(true);
         menuStockField.setEnabled(false);
 
-        menuDurationField.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+        menuDurationField.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         menuDurationField.setToolTipText("Set the duration of the menu to be cooked (in minute(s)).");
         menuDurationField.setDoubleBuffered(true);
         menuDurationField.setEnabled(false);
@@ -1369,8 +1376,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     
     @Override
     public void run() {
-        operator = Operator.getInstance();
-        operator.setMainFrame(this);
         operator.switchCard(CardList.WELCOME);
         getContentPane().setBackground(new java.awt.Color(0xffffff));
         setLocationRelativeTo(null);

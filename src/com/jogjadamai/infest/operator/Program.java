@@ -37,10 +37,7 @@ public final class Program {
         Program.SignInGUI = new SignInGUI();
         Program.MainGUIThread = new Thread(Program.MainGUI);
         Program.SignInGUIThread = new Thread(Program.SignInGUI);
-        Program.showSignInGUI();
-    }
-    
-    protected static void showSignInGUI() {
+        java.awt.EventQueue.invokeLater(Program.MainGUIThread);
         java.awt.EventQueue.invokeLater(Program.SignInGUIThread);
     }
     
