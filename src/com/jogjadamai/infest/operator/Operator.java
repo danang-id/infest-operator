@@ -158,6 +158,57 @@ public final class Operator {
         return java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").format(java.time.LocalDateTime.now());
     }
     
+    private Boolean isCredentialsCurrent(java.awt.Component parent, com.jogjadamai.infest.communication.Credentials credentials) {
+        com.jogjadamai.infest.communication.Credentials savedCred = null;
+        try {    
+            savedCred = this.protocolServer.getCredentials(protocolClient);
+            if(savedCred == null) {
+                savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);
+                System.err.println("[INFEST] " +  getNowTime() + ": " + "java.lang.NullPointerException");
+                javax.swing.JOptionPane.showMessageDialog(parent, 
+                        "Infest Configuration File is miss-configured!\n\n"
+                        + "Please verify that the Infest Configuration File (infest.conf) is exist in the current\n"
+                        + "working directory and is properly configured. Any wrong setting or modification of\n"
+                        + "Infest Configuration File would cause this error.", 
+                        "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
+                fatalExit(-1);
+            }
+            try {
+                String salt = getSalt();
+                try {
+                    credentials.encrpyt(salt);
+                    return savedCred.equals(credentials);
+                } catch (Exception ex) {
+                    System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                    javax.swing.JOptionPane.showMessageDialog(parent,
+                            "Failed to encrypt credentials!\n\n"
+                            + "Please contact an Infest Administrator for furhter help.", 
+                            "INFEST: Encryption Service", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            } catch (NullPointerException ex) {
+                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+                javax.swing.JOptionPane.showMessageDialog(parent, 
+                        "Infest Configuration File is miss-configured!\n\n"
+                        + "Please verify that the Infest Configuration File (infest.conf) is exist in the current\n"
+                        + "working directory and is properly configured. Any wrong setting or modification of\n"
+                        + "Infest Configuration File would cause this error.", 
+                        "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
+                fatalExit(-1);
+                return false;
+            }
+        } catch (java.rmi.RemoteException ex) {
+            savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);
+            System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to communicate with Infest API Server!\n\n"
+                    + "Please verify that Infest API Server is currently turned on and your network connection is working.\n"
+                    + "If Infest API Server is OFF, try to restart this program if problem after turning ON Infest API Server.\n"
+                    + "Infest Program will now switched to MAINTENANCE MODE.",
+                    "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+    
     protected void signIn() {
         if(isMaintenanceModeActive()) {
             System.err.println("[INFEST] " +  getNowTime() + ": com.jogjdamai.infest.MaintenanceModeException");
@@ -170,49 +221,15 @@ public final class Operator {
                     + "network connection is working.",
                     "INFEST: Maintenance Mode", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
-            com.jogjadamai.infest.communication.Credentials savedCred = null;
-            try {    
-                savedCred = this.protocolServer.getCredentials(protocolClient);
-            } catch (java.rmi.RemoteException ex) {
-                savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);
-                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
-                        "Infest API Server is unable to run!\n\n"
-                        + "Program error detected.", "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                fatalExit(-1);
-            }
-            com.jogjadamai.infest.communication.Credentials inputCred = new com.jogjadamai.infest.communication.Credentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword());
-            try {
-                String salt = null;
-                salt = this.programPropertiesManager.getProperty("salt");
-                try {
-                    inputCred.encrpyt(salt);
-                } catch (Exception ex) {
-                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
-                        "Failed to encrypt credentials!\n\n"
-                        + "Please contact an Infest Administrator for furhter help.", 
-                        "INFEST: Encryption Service", javax.swing.JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NullPointerException ex) {
-                System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
-                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
-                        "Infest Configuration File is miss-configured!\n\n"
-                        + "Please verify that the Infest Configuration File (infest.conf) is exist in the current\n"
-                        + "working directory and is properly configured. Any wrong setting or modification of\n"
-                        + "Infest Configuration File would cause this error.", 
-                        "INFEST: Program Configuration Manager", javax.swing.JOptionPane.ERROR_MESSAGE);
-                fatalExit(-1);
-            }
-            if(savedCred.equals(inputCred)) {
+            if(isCredentialsCurrent((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, new com.jogjadamai.infest.communication.Credentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword()))) {
                 signInFrame.setVisible(false);
                 mainFrame.setVisible(true);
                 activeFrame = ViewFrame.MAIN;
             } else {
                 javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
-                        "Sign In Failed!\n\n"
-                        + "Either username or password is wrong, or your\n"
-                        + "Infest Configuration File is miss-configured.", 
+                        "Authentication Failed!\n\n"
+                            + "Either username or password is wrong, or your\n"
+                            + "Infest Configuration File is miss-configured.",
                         "INFEST: Authentication System", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -220,6 +237,9 @@ public final class Operator {
     
     protected void signOut() {
         mainFrame.setVisible(false);
+        signInFrame.usernameField.setText("");
+        signInFrame.usernameField.requestFocusInWindow();
+        signInFrame.passwordField.setText("");
         signInFrame.setVisible(true);
         activeFrame = ViewFrame.SIGN_IN;
     }
@@ -1145,6 +1165,19 @@ public final class Operator {
             imageData = null;
         }
         displayImage(imageData);
+    }
+    
+    private String getSalt() throws NullPointerException {
+        String salt;
+        try {
+            salt = programPropertiesManager.getProperty("salt");
+            if(salt.isEmpty()) throw new NullPointerException();
+        } catch(NullPointerException ex) {
+            System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+            salt = "";
+            throw ex;
+        }
+        return salt;
     }
     
 }
