@@ -25,7 +25,7 @@ package com.jogjadamai.infest.tablemodel;
  * @author Adam Afandi
  * @version 2017.03.10.0001
  */
-public class FinancialStatementTableModel extends javax.swing.table.AbstractTableModel {
+public final class FinancialStatementTableModel extends javax.swing.table.AbstractTableModel {
 
     private final java.util.List<com.jogjadamai.infest.entity.FinanceReport> FINANCE_REPORT_LIST;
     private final String CURRENCY;

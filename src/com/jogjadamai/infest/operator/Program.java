@@ -35,11 +35,9 @@ public final class Program {
     private static Operator Controller;
     
     public static void main(String[] args) {
-        Program.Controller = Operator.getInstance();
         Program.SignInGUI = new SignInGUI();
         Program.MainGUI = new MainGUI();
-        Program.Controller.setSignInFrame(Program.SignInGUI);
-        Program.Controller.setMainFrame(Program.MainGUI);
+        Program.Controller = Operator.getInstance(Program.SignInGUI, Program.MainGUI);
         Program.SignInThread = new Thread(Program.SignInGUI);
         Program.MainThread = new Thread(Program.MainGUI);
         java.awt.EventQueue.invokeLater(Program.SignInThread);

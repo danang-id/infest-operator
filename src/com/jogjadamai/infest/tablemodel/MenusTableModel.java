@@ -25,7 +25,7 @@ package com.jogjadamai.infest.tablemodel;
  * @author Adam Afandi
  * @version 2017.03.10.0001
  */
-public class MenusTableModel extends javax.swing.table.AbstractTableModel {
+public final class MenusTableModel extends javax.swing.table.AbstractTableModel {
 
     private final java.util.List<com.jogjadamai.infest.entity.Menus> MENUS_LIST;
     private final String CURRENCY;

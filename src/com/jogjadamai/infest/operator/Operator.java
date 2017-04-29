@@ -63,6 +63,13 @@ public final class Operator {
         return INSTANCE;
     }
     
+    protected static Operator getInstance(com.jogjadamai.infest.operator.SignInGUI signInFrame, com.jogjadamai.infest.operator.MainGUI mainFrame) {
+        if(INSTANCE == null) INSTANCE = new Operator();
+        INSTANCE.setSignInFrame(signInFrame);
+        INSTANCE.setMainFrame(mainFrame);
+        return INSTANCE;
+    }
+    
     private void initialiseConnection() {
         String serverAddress = null;
         try {
@@ -158,12 +165,12 @@ public final class Operator {
         return java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").format(java.time.LocalDateTime.now());
     }
     
-    private Boolean isCredentialsCurrent(java.awt.Component parent, com.jogjadamai.infest.communication.Credentials credentials) {
-        com.jogjadamai.infest.communication.Credentials savedCred = null;
+    private Boolean isCredentialsCurrent(java.awt.Component parent, com.jogjadamai.infest.security.Credentials credentials) {
+        com.jogjadamai.infest.security.Credentials savedCred = null;
         try {    
             savedCred = this.protocolServer.getCredentials(protocolClient);
             if(savedCred == null) {
-                savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);
+                savedCred = com.jogjadamai.infest.security.CredentialsManager.createCredentials("", "");
                 System.err.println("[INFEST] " +  getNowTime() + ": " + "java.lang.NullPointerException");
                 javax.swing.JOptionPane.showMessageDialog(parent, 
                         "Infest Configuration File is miss-configured!\n\n"
@@ -176,13 +183,13 @@ public final class Operator {
             try {
                 String salt = getSalt();
                 try {
-                    credentials.encrpyt(salt);
+                    com.jogjadamai.infest.security.CredentialsManager.encryptCredentials(credentials, salt);
                     return savedCred.equals(credentials);
                 } catch (Exception ex) {
                     System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                     javax.swing.JOptionPane.showMessageDialog(parent,
                             "Failed to encrypt credentials!\n\n"
-                            + "Please contact an Infest Administrator for furhter help.", 
+                            + "Please contact an Infest Administrator for further help.", 
                             "INFEST: Encryption Service", javax.swing.JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
@@ -198,7 +205,7 @@ public final class Operator {
                 return false;
             }
         } catch (java.rmi.RemoteException ex) {
-            savedCred = new com.jogjadamai.infest.communication.Credentials("", new char[0]);
+            savedCred = com.jogjadamai.infest.security.CredentialsManager.createCredentials("", "");
             System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
             javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to communicate with Infest API Server!\n\n"
                     + "Please verify that Infest API Server is currently turned on and your network connection is working.\n"
@@ -221,7 +228,7 @@ public final class Operator {
                     + "network connection is working.",
                     "INFEST: Maintenance Mode", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
-            if(isCredentialsCurrent((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, new com.jogjadamai.infest.communication.Credentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword()))) {
+            if(isCredentialsCurrent((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, com.jogjadamai.infest.security.CredentialsManager.createCredentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword()))) {
                 signInFrame.setVisible(false);
                 mainFrame.setVisible(true);
                 activeFrame = ViewFrame.MAIN;
@@ -340,15 +347,23 @@ public final class Operator {
     
     private void reloadTable() {
         currentSaveMethod = SaveMethod.UPDATE;
-        if(loadedMenu != null) mainFrame.menusTable.setModel(new com.jogjadamai.infest.tablemodel.MenusTableModel(loadedMenu, getCurrency()));
-        if(loadedTable != null) mainFrame.tablesTable.setModel(new com.jogjadamai.infest.tablemodel.TablesTableModel(loadedTable));
+        if(loadedMenu != null) {
+            mainFrame.menusTable.setModel(new com.jogjadamai.infest.tablemodel.MenusTableModel(loadedMenu, getCurrency()));
+            mainFrame.menusTable.packAll();
+        }
+        if(loadedTable != null) {
+            mainFrame.tablesTable.setModel(new com.jogjadamai.infest.tablemodel.TablesTableModel(loadedTable));
+            mainFrame.tablesTable.packAll();
+        }
         if(loadedFinancialStatement != null) {
             mainFrame.financialStatementTable.setModel(new com.jogjadamai.infest.tablemodel.FinancialStatementTableModel(loadedFinancialStatement, getCurrency()));
+            mainFrame.financialStatementTable.packAll();
             Integer totalIncome = 0;
             for(com.jogjadamai.infest.entity.FinanceReport statement : loadedFinancialStatement) {
                 totalIncome = totalIncome + statement.getIncome();
             }
-            mainFrame.totalIncomeValueLabel.setText(String.valueOf(totalIncome) + " " + getCurrency().getDescription());
+            java.text.NumberFormat format = java.text.NumberFormat.getNumberInstance(java.util.Locale.getDefault());
+            mainFrame.totalIncomeValueLabel.setText(format.format(totalIncome) + " " + getCurrency().getDescription());
         }
     }
     
@@ -375,7 +390,7 @@ public final class Operator {
                         java.util.List<com.jogjadamai.infest.entity.Menus> allMenus = protocolServer.readAllMenu(protocolClient);
                         java.util.List<com.jogjadamai.infest.entity.Menus> requestedMenus = new java.util.ArrayList<>();
                         for(com.jogjadamai.infest.entity.Menus menu : allMenus) {
-                            if( String.valueOf(menu.getId()).toLowerCase().contains(mainFrame.searchMenusField.getText().toLowerCase()) | 
+                            if(String.valueOf(menu.getId()).toLowerCase().contains(mainFrame.searchMenusField.getText().toLowerCase()) | 
                                     menu.getName().toLowerCase().contains(mainFrame.searchMenusField.getText().toLowerCase()) |
                                     String.valueOf(menu.getPrice()).contains(mainFrame.searchMenusField.getText().toLowerCase()) | 
                                     menu.getDescription().toLowerCase().contains(mainFrame.searchMenusField.getText().toLowerCase()) ) {
@@ -579,6 +594,31 @@ public final class Operator {
                     loadedFinancialStatement = new java.util.ArrayList<>();
                 } finally {
                     reloadTable();
+                }
+            }
+        }
+    }
+    
+    protected void printFinancialStatement() {
+        if(loadedFinancialStatement == null) {
+            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+                    "Unable to print financial statement!\n"
+                            + "\n"
+                            + "There's no current financial statement that is loaded. Please try again.",
+                    "INFEST: Printing Service", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else {
+            java.awt.print.PrinterJob printerJob = java.awt.print.PrinterJob.getPrinterJob();
+            printerJob.setPrintable(new FinancialStatementPrintable(mainFrame.financialStatementTable, "Date", "Income"));
+            if (printerJob.printDialog()) {
+                try {
+                     printerJob.print();
+                } catch (java.awt.print.PrinterException ex) {
+                    javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+                        "Unable to print financial statement!\n"
+                                + "\n"
+                                + "There's an error with Internal Printing Service. Please try again.\n"
+                                + "If problem persists, please contact an Infest Administrator.",
+                        "INFEST: Printing Service", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

@@ -25,7 +25,7 @@ package com.jogjadamai.infest.tablemodel;
  * @author Adam Afandi
  * @version 2017.03.10.0001
  */
-public class TablesTableModel extends javax.swing.table.AbstractTableModel {
+public final class TablesTableModel extends javax.swing.table.AbstractTableModel {
 
     private final java.util.List<com.jogjadamai.infest.entity.Tables> TABLES_LIST;
 

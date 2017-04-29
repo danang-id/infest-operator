@@ -964,7 +964,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="menusTable">
+                    <Component class="org.jdesktop.swingx.JXTable" name="menusTable">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="6" rowCount="0">
@@ -1327,7 +1327,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="tablesTable">
+                    <Component class="org.jdesktop.swingx.JXTable" name="tablesTable">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="3" rowCount="0">
@@ -1425,8 +1425,10 @@
                               <Component id="findByDateCheckBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="financialStatementDateChooser" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace pref="267" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
                               <Component id="getFinancialStatementButton" min="-2" pref="150" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="printFinancialStatementButton" min="-2" pref="150" max="-2" attributes="0"/>
                           </Group>
                           <Component id="financialStatementScrollPane" max="32767" attributes="0"/>
                       </Group>
@@ -1446,11 +1448,14 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="findByDateCheckBox" max="32767" attributes="0"/>
-                          <Component id="financialStatementDateChooser" max="32767" attributes="0"/>
-                          <Component id="getFinancialStatementButton" max="32767" attributes="0"/>
+                          <Component id="findByDateCheckBox" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="financialStatementDateChooser" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="getFinancialStatementButton" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                              <Component id="printFinancialStatementButton" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="19" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="financialStatementScrollPane" min="-2" pref="386" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -1473,7 +1478,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="financialStatementTable">
+                <Component class="org.jdesktop.swingx.JXTable" name="financialStatementTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="5" rowCount="0">
@@ -1485,6 +1490,7 @@
                       </Table>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Financial Statement."/>
+                    <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
@@ -1519,7 +1525,13 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="columnSequence" type="[Ljava.lang.Object;" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="default"/>
+                    </Property>
                     <Property name="doubleBuffered" type="boolean" value="true"/>
+                    <Property name="editable" type="boolean" value="false"/>
+                    <Property name="rowSelectionAllowed" type="boolean" value="false"/>
+                    <Property name="showGrid" type="boolean" value="false"/>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
@@ -1561,7 +1573,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="getFinancialStatementButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Get Financial Statement"/>
+                <Property name="text" type="java.lang.String" value="Get Statement"/>
                 <Property name="toolTipText" type="java.lang.String" value="Generate financial statement based on sales made (all or on a specific date)."/>
                 <Property name="doubleBuffered" type="boolean" value="true"/>
               </Properties>
@@ -1608,6 +1620,15 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
               </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="printFinancialStatementButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Print Statement"/>
+                <Property name="toolTipText" type="java.lang.String" value="Print this financial statement."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printFinancialStatementButtonActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

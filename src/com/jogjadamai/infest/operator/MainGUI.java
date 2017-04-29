@@ -90,7 +90,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         menuImageIconLabel = new javax.swing.JLabel();
         manageMenusLowerPanel = new javax.swing.JPanel();
         menusTableScrollPane = new javax.swing.JScrollPane();
-        menusTable = new javax.swing.JTable();
+        menusTable = new org.jdesktop.swingx.JXTable();
         searchMenusField = new javax.swing.JTextField();
         searchMenusButton = new javax.swing.JButton();
         showAllMenusButton = new javax.swing.JButton();
@@ -108,17 +108,18 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         deleteTableButton = new javax.swing.JButton();
         manageTablesRightPanel = new javax.swing.JPanel();
         tablesTableScrollPane = new javax.swing.JScrollPane();
-        tablesTable = new javax.swing.JTable();
+        tablesTable = new org.jdesktop.swingx.JXTable();
         searchTablesButton = new javax.swing.JButton();
         searchTablesField = new javax.swing.JTextField();
         financialStatementPanel = new javax.swing.JPanel();
         financialStatementScrollPane = new javax.swing.JScrollPane();
-        financialStatementTable = new javax.swing.JTable();
+        financialStatementTable = new org.jdesktop.swingx.JXTable();
         financialStatementDateChooser = new com.toedter.calendar.JDateChooser();
         getFinancialStatementButton = new javax.swing.JButton();
         findByDateCheckBox = new javax.swing.JCheckBox();
         totalIncomeLabel = new javax.swing.JLabel();
         totalIncomeValueLabel = new javax.swing.JLabel();
+        printFinancialStatementButton = new javax.swing.JButton();
         mainMenuBar = new javax.swing.JMenuBar();
         programMenu = new javax.swing.JMenu();
         welcomeScreenMenuItem = new javax.swing.JMenuItem();
@@ -878,7 +879,11 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
             }
         });
         financialStatementTable.setToolTipText("Financial Statement.");
+        financialStatementTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         financialStatementTable.setDoubleBuffered(true);
+        financialStatementTable.setEditable(false);
+        financialStatementTable.setRowSelectionAllowed(false);
+        financialStatementTable.setShowGrid(false);
         financialStatementScrollPane.setViewportView(financialStatementTable);
 
         financialStatementDateChooser.setBackground(new java.awt.Color(0xffffff));
@@ -894,7 +899,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         binding.setSourceUnreadableValue(false);
         bindingGroup.addBinding(binding);
 
-        getFinancialStatementButton.setText("Get Financial Statement");
+        getFinancialStatementButton.setText("Get Statement");
         getFinancialStatementButton.setToolTipText("Generate financial statement based on sales made (all or on a specific date).");
         getFinancialStatementButton.setDoubleBuffered(true);
         getFinancialStatementButton.addActionListener(new java.awt.event.ActionListener() {
@@ -924,6 +929,14 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         totalIncomeValueLabel.setDoubleBuffered(true);
         totalIncomeValueLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
+        printFinancialStatementButton.setText("Print Statement");
+        printFinancialStatementButton.setToolTipText("Print this financial statement.");
+        printFinancialStatementButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printFinancialStatementButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout financialStatementPanelLayout = new javax.swing.GroupLayout(financialStatementPanel);
         financialStatementPanel.setLayout(financialStatementPanelLayout);
         financialStatementPanelLayout.setHorizontalGroup(
@@ -935,8 +948,10 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                         .addComponent(findByDateCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(financialStatementDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 267, Short.MAX_VALUE)
-                        .addComponent(getFinancialStatementButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(111, 111, 111)
+                        .addComponent(getFinancialStatementButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(printFinancialStatementButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(financialStatementScrollPane))
                 .addGap(15, 15, 15))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, financialStatementPanelLayout.createSequentialGroup()
@@ -951,10 +966,12 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
             .addGroup(financialStatementPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(financialStatementPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(findByDateCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(financialStatementDateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(getFinancialStatementButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                    .addComponent(findByDateCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(financialStatementDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(financialStatementPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(getFinancialStatementButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(printFinancialStatementButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20)
                 .addComponent(financialStatementScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
                 .addGroup(financialStatementPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1276,6 +1293,10 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         operator.loadFields(CardList.MENUS);
     }//GEN-LAST:event_menusTableKeyReleased
 
+    private void printFinancialStatementButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printFinancialStatementButtonActionPerformed
+        operator.printFinancialStatement();
+    }//GEN-LAST:event_printFinancialStatementButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JMenuItem changeImageMenuItem;
     protected javax.swing.JLabel currencyLabel;
@@ -1287,7 +1308,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem financialStatementMenuItem;
     private javax.swing.JPanel financialStatementPanel;
     private javax.swing.JScrollPane financialStatementScrollPane;
-    protected javax.swing.JTable financialStatementTable;
+    protected org.jdesktop.swingx.JXTable financialStatementTable;
     protected javax.swing.JCheckBox findByDateCheckBox;
     private javax.swing.JMenu generateMenu;
     private javax.swing.JButton getFinancialStatementButton;
@@ -1326,11 +1347,12 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel menuStockLabel;
     protected javax.swing.JComboBox menuTypeComboBox;
     private javax.swing.JLabel menuTypeLabel;
-    protected javax.swing.JTable menusTable;
+    protected org.jdesktop.swingx.JXTable menusTable;
     private javax.swing.JScrollPane menusTableScrollPane;
     private javax.swing.JLabel minutesLabel;
     private javax.swing.JButton newMenuButton;
     private javax.swing.JButton newTableButton;
+    private javax.swing.JButton printFinancialStatementButton;
     private javax.swing.JMenu programMenu;
     private javax.swing.JPopupMenu.Separator programMenuSeparator;
     protected javax.swing.JButton saveChangesMenuButton;
@@ -1350,7 +1372,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel tableIDLabel;
     protected javax.swing.JTextField tableNameField;
     private javax.swing.JLabel tableNameLabel;
-    protected javax.swing.JTable tablesTable;
+    protected org.jdesktop.swingx.JXTable tablesTable;
     private javax.swing.JScrollPane tablesTableScrollPane;
     protected javax.swing.JLabel titleLabel;
     private javax.swing.JLabel totalIncomeLabel;
