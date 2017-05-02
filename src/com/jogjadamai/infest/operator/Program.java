@@ -37,11 +37,12 @@ public final class Program {
     public static void main(String[] args) {
         Program.SignInGUI = new SignInGUI();
         Program.MainGUI = new MainGUI();
-        Program.Controller = Operator.getInstance(Program.SignInGUI, Program.MainGUI);
+        Program.Controller = Operator.createInstance(Program.SignInGUI, Program.MainGUI);
         Program.SignInThread = new Thread(Program.SignInGUI);
         Program.MainThread = new Thread(Program.MainGUI);
         java.awt.EventQueue.invokeLater(Program.SignInThread);
         java.awt.EventQueue.invokeLater(Program.MainThread);
+        Program.Controller.onFirstRun();
     }
     
 }

@@ -254,7 +254,6 @@ public final class SignInGUI extends javax.swing.JFrame implements Runnable {
         operator = com.jogjadamai.infest.operator.Operator.getInstance();
         getContentPane().setBackground(new java.awt.Color(0x651112));
         setLocationRelativeTo(null);
-        setVisible(true);
     }
     
 }

@@ -40,7 +40,7 @@ public final class Operator {
     private SaveMethod currentSaveMethod;
     private byte[] currentImageData;
     
-    private final com.jogjadamai.infest.service.ProgramPropertiesManager programPropertiesManager;
+    private com.jogjadamai.infest.service.ProgramPropertiesManager programPropertiesManager;
     
     private enum SaveMethod {
         INSERT, UPDATE
@@ -52,25 +52,40 @@ public final class Operator {
     
     private static Operator INSTANCE;
     
-    private Operator() {
-        this.programPropertiesManager = com.jogjadamai.infest.service.ProgramPropertiesManager.getInstance();
-        this.initialiseConnection();
+    private Operator(com.jogjadamai.infest.operator.SignInGUI signInFrame, com.jogjadamai.infest.operator.MainGUI mainFrame) {
+        this.signInFrame = signInFrame;
+        this.mainFrame = mainFrame;
         this.activeFrame = ViewFrame.SIGN_IN;
     }
     
     protected static Operator getInstance() {
-        if(INSTANCE == null) INSTANCE = new Operator();
         return INSTANCE;
     }
     
-    protected static Operator getInstance(com.jogjadamai.infest.operator.SignInGUI signInFrame, com.jogjadamai.infest.operator.MainGUI mainFrame) {
-        if(INSTANCE == null) INSTANCE = new Operator();
-        INSTANCE.setSignInFrame(signInFrame);
-        INSTANCE.setMainFrame(mainFrame);
+    protected static Operator createInstance(com.jogjadamai.infest.operator.SignInGUI signInFrame, com.jogjadamai.infest.operator.MainGUI mainFrame) {
+        if(INSTANCE == null) INSTANCE = new Operator(signInFrame, mainFrame);
         return INSTANCE;
+    }
+    
+    protected void onFirstRun() {
+        java.io.File configFile = new java.io.File("infest.conf");
+        if (!configFile.exists()) {
+            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
+                    "Hi, welcome to Infest Program!\n"
+                            + "\n"
+                            + "We believe that it is your first time running this application.\n"
+                            + "Before proceeding, please fill something for us :)", 
+                    "INFEST: Program Configuration Manager", 
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            new com.jogjadamai.infest.operator.FirstTimeConfiguration().setVisible(true);
+        } else {
+            initialiseConnection();
+            signInFrame.setVisible(true);
+        }
     }
     
     private void initialiseConnection() {
+        programPropertiesManager = com.jogjadamai.infest.service.ProgramPropertiesManager.getInstance();
         String serverAddress = null;
         try {
             serverAddress = programPropertiesManager.getProperty("serveraddress");
@@ -153,14 +168,6 @@ public final class Operator {
         return featureValue;
     }
     
-    protected void setSignInFrame(com.jogjadamai.infest.operator.SignInGUI signInFrame) {
-        this.signInFrame = signInFrame;
-    }
-    
-    protected void setMainFrame(com.jogjadamai.infest.operator.MainGUI mainFrame) {
-        this.mainFrame = mainFrame;
-    }
-    
     private String getNowTime() {
         return java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").format(java.time.LocalDateTime.now());
     }
@@ -230,6 +237,7 @@ public final class Operator {
         } else {
             if(isCredentialsCurrent((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, com.jogjadamai.infest.security.CredentialsManager.createCredentials(signInFrame.usernameField.getText(), signInFrame.passwordField.getPassword()))) {
                 signInFrame.setVisible(false);
+                switchCard(com.jogjadamai.infest.operator.MainGUI.CardList.WELCOME);
                 mainFrame.setVisible(true);
                 activeFrame = ViewFrame.MAIN;
             } else {
@@ -244,7 +252,6 @@ public final class Operator {
     
     protected void signOut() {
         mainFrame.setVisible(false);
-        signInFrame.usernameField.setText("");
         signInFrame.usernameField.requestFocusInWindow();
         signInFrame.passwordField.setText("");
         signInFrame.setVisible(true);

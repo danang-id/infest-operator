@@ -533,22 +533,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         menusTableScrollPane.setToolTipText("List of menus.");
         menusTableScrollPane.setDoubleBuffered(true);
 
-        menusTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Name", "Status", "Type", "Price", "Stock", "Duration"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         menusTable.setToolTipText("List of menus.");
         menusTable.setDoubleBuffered(true);
         menusTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -760,22 +744,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         tablesTableScrollPane.setToolTipText("List of tables.");
         tablesTableScrollPane.setDoubleBuffered(true);
 
-        tablesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Table ID", "Name", "Description"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         tablesTable.setToolTipText("List of tables.");
         tablesTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -862,28 +830,9 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
 
         financialStatementScrollPane.setDoubleBuffered(true);
 
-        financialStatementTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Menu Name", "Menu Price", "Total Order", "Income", "Status"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         financialStatementTable.setToolTipText("Financial Statement.");
-        financialStatementTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         financialStatementTable.setDoubleBuffered(true);
-        financialStatementTable.setEditable(false);
         financialStatementTable.setRowSelectionAllowed(false);
-        financialStatementTable.setShowGrid(false);
         financialStatementScrollPane.setViewportView(financialStatementTable);
 
         financialStatementDateChooser.setBackground(new java.awt.Color(0xffffff));
@@ -1242,7 +1191,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_signOutMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
-        operator.shutdown(1);
+        operator.shutdown(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void manageMenuMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageMenuMenuItemActionPerformed
@@ -1393,7 +1342,6 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
     @Override
     public void run() {
         operator = com.jogjadamai.infest.operator.Operator.getInstance();
-        operator.switchCard(CardList.WELCOME);
         getContentPane().setBackground(new java.awt.Color(0xffffff));
         setLocationRelativeTo(null);
     }
