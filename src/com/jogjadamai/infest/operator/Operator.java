@@ -15,6 +15,20 @@
  */
 package com.jogjadamai.infest.operator;
 
+import com.jogjadamai.infest.entity.FinanceReport;
+import com.jogjadamai.infest.entity.Menus;
+import com.jogjadamai.infest.entity.Orders;
+import java.rmi.RemoteException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 
 /**
  * <h1>class <code>Operator</code></h1>
@@ -196,6 +210,7 @@ public final class Operator {
                     System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                     javax.swing.JOptionPane.showMessageDialog(parent,
                             "Failed to encrypt credentials!\n\n"
+                            +"Please make sure that you have installed JCE Unlimited Policy"
                             + "Please contact an Infest Administrator for further help.", 
                             "INFEST: Encryption Service", javax.swing.JOptionPane.ERROR_MESSAGE);
                     return false;
@@ -284,23 +299,29 @@ public final class Operator {
                     mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/OperatorPanelLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "welcomeCard");
+                    setDefaultFields(MainGUI.CardList.MENUS);
+                    setDefaultFields(MainGUI.CardList.TABLES);
                     break;
                 case MENUS:
                     mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/MenuManagementLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel >> Menu Management");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "manageMenusCard");
+                    setDefaultFields(MainGUI.CardList.TABLES);
                     this.readAll(card);
                     break;
                 case TABLES:
                     mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/TableManagementLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel >> Table Management");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "manageTablesCard");
+                    setDefaultFields(MainGUI.CardList.MENUS);
                     this.readAll(card);
                     break;
                 case FINANCIAL_STATEMENT:
                     mainFrame.titleLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/FinancialStatementLabel.png")));
                     mainFrame.setTitle("INFEST: Operator Panel >> Financial Statement");
                     mainFrame.getCardLayout().show(mainFrame.mainPanel, "financialStatementCard");
+                    setDefaultFields(MainGUI.CardList.MENUS);
+                    setDefaultFields(MainGUI.CardList.TABLES);
                     if(!isStatementGeneratorActive()) {
                         javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
                         "The feature [FINANCIAL_STATEMENT_GENERATOR] is turned OFF by an Infest Administrator.\n"
@@ -308,6 +329,7 @@ public final class Operator {
                         + "NOTE: If this features is turned OFF, then any chances to generate Financial Statement\n"
                         + "would be PROHIBITED.", 
                         "INFEST: Financial Statement Generator", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        mainFrame.findByDateCheckBox.setEnabled(false);
                     }
                     break;
             }
@@ -405,6 +427,7 @@ public final class Operator {
                             }
                         }
                         loadedMenu = requestedMenus;
+                        setDefaultFields(card);
                     } catch (java.rmi.RemoteException ex) {
                         System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                         javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to communicate with Infest API Server!\n\n"
@@ -442,6 +465,7 @@ public final class Operator {
                             }
                         }
                         loadedTable = requestedTables;
+                        setDefaultFields(card);
                     } catch (java.rmi.RemoteException ex) {
                         System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                         javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to communicate with Infest API Server!\n\n"
@@ -492,6 +516,8 @@ public final class Operator {
                     try {
                         loadedMenu = protocolServer.readAllMenu(protocolClient);
                         reloadTable();
+                        setDefaultFields(card);
+                        mainFrame.searchMenusField.setText("");
                     } catch (java.rmi.RemoteException ex) {
                         System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                         javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to communicate with Infest API Server!\n\n"
@@ -517,6 +543,7 @@ public final class Operator {
                             if(table.getStatus() != 0) loadedTable.add(table);
                         }
                         reloadTable();
+                        setDefaultFields(card);
                     } catch (java.rmi.RemoteException ex) {
                         System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                         javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Failed to communicate with Infest API Server!\n\n"
@@ -567,13 +594,15 @@ public final class Operator {
                 reloadTable();
             } else {
                 try {
+                    java.util.Date dateChooser = mainFrame.financialStatementDateChooser.getDate();
+                    mainFrame.findByDateCheckBox.setEnabled(true);
                     java.util.Date date = mainFrame.findByDateCheckBox.isSelected() ? 
-                            mainFrame.financialStatementDateChooser.getDate() : 
-                            new java.util.Date(0);
+                            new java.util.Date(dateChooser.getYear(), dateChooser.getMonth(), dateChooser.getDate()) : 
+                            new java.util.Date(0, 0, 1);
                     java.time.LocalDate localDate = java.time.LocalDateTime.ofInstant(date.toInstant(), java.time.ZoneId.of("GMT+7")).toLocalDate();
                     try {
                         loadedFinancialStatement = mainFrame.findByDateCheckBox.isSelected() ? 
-                                protocolServer.readFinanceReport(protocolClient, localDate) :
+                                protocolServer.readFinanceReport(protocolClient, date) :
                                 protocolServer.readFinanceReport(protocolClient);
                     } catch (java.rmi.RemoteException ex) {
                         System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
@@ -583,7 +612,8 @@ public final class Operator {
                                 + "Infest Program will now switched to MAINTENANCE MODE.",
                                 "INFEST: Remote Connection Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                         signOut();
-                    } catch (java.lang.NullPointerException ex) {
+                    } 
+                    catch (java.lang.NullPointerException ex) {
                         System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
                         javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, "Infest API Server give blank response!\n\n"
                                 + "Please verify that Infest API Server is currently ON & LISTENING (not in IDLE mode).\n"
@@ -607,26 +637,52 @@ public final class Operator {
     }
     
     protected void printFinancialStatement() {
-        if(loadedFinancialStatement == null) {
-            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+        if (!isStatementGeneratorActive()) {
+            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
+                    "Failed to print Financial Statement!\n\n"
+                    + "The feature [FINANCIAL_STATEMENT_GENERATOR] is turned off by an Infest Administrator,\n"
+                            + " "
+                    + "Please contact Infest Administrator for further information, or try again later.",
+                    "INFEST: Financial Statement Generator", javax.swing.JOptionPane.ERROR_MESSAGE);
+            mainFrame.findByDateCheckBox.setSelected(false);
+            loadedFinancialStatement = new java.util.ArrayList<>();
+            reloadTable();
+        } else if (loadedFinancialStatement == null) {
+            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
                     "Unable to print financial statement!\n"
-                            + "\n"
-                            + "There's no current financial statement that is loaded. Please try again.",
+                    + "\n"
+                    + "There's no current financial statement that is loaded. Please try again.",
                     "INFEST: Printing Service", javax.swing.JOptionPane.ERROR_MESSAGE);
-        } else {
-            java.awt.print.PrinterJob printerJob = java.awt.print.PrinterJob.getPrinterJob();
-            printerJob.setPrintable(new FinancialStatementPrintable(mainFrame.financialStatementTable, "Date", "Income"));
-            if (printerJob.printDialog()) {
-                try {
-                     printerJob.print();
-                } catch (java.awt.print.PrinterException ex) {
-                    javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
+        } else if (loadedFinancialStatement.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
+                    "Unable to print financial statement!\n"
+                    + "\n"
+                    + "There's no current financial statement that is loaded. Please try again.",
+                    "INFEST: Printing Service", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }else {
+            org.jdesktop.swingx.JXTable printable = mainFrame.financialStatementTable;
+//            printable.setDoubleBuffered(true);
+//            printable.setModel(new com.jogjadamai.infest.tablemodel.FinancialStatementTableModel(loadedFinancialStatement, getCurrency()));
+//            printable.packAll();
+            String printedHeader;
+            if(mainFrame.findByDateCheckBox.isSelected()){
+                printedHeader = "Total Income : " + mainFrame.totalIncomeValueLabel.getText()
+                        + " On "+ mainFrame.financialStatementDateChooser.getDate();
+            } else {
+                printedHeader = "Total Income : " + mainFrame.totalIncomeValueLabel.getText();
+            }
+            String printedFooter = "Printed on : " + getNowTime();
+            try {
+                printable.print(javax.swing.JTable.PrintMode.FIT_WIDTH, new java.text.MessageFormat(printedHeader)
+                        , new java.text.MessageFormat(printedFooter),true, null, true, null);
+            } catch (java.awt.print.PrinterException  ex) {
+                System.err.println(ex.getMessage());
+                javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame,
                         "Unable to print financial statement!\n"
-                                + "\n"
-                                + "There's an error with Internal Printing Service. Please try again.\n"
-                                + "If problem persists, please contact an Infest Administrator.",
+                        + "\n"
+                        + "There's an error with Internal Printing Service. Please try again.\n"
+                        + "If problem persists, please contact an Infest Administrator.",
                         "INFEST: Printing Service", javax.swing.JOptionPane.ERROR_MESSAGE);
-                }
             }
         }
     }
@@ -722,6 +778,7 @@ public final class Operator {
                         mainFrame.menuStockField.setValue(0);
                         mainFrame.menuDurationField.setValue(0);
                         mainFrame.menuDescriptionArea.setText("");
+                        displayImage(null);
                     }
                     break;
                 case TABLES:
@@ -1101,9 +1158,12 @@ public final class Operator {
     }
     
     protected void openDocumentation() {
-        javax.swing.JOptionPane.showMessageDialog((activeFrame == ViewFrame.MAIN) ? mainFrame : signInFrame, 
-            "Documentation of this program is not yet available. Please check on further release.\n\nThank you!",
-            "INFEST: Documentation", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        java.io.File docFile = new java.io.File("Infest-Documentation.pdf");
+        try {
+            java.awt.Desktop.getDesktop().open(docFile);
+        } catch (java.io.IOException ex) {
+            System.err.println("[INFEST] " +  getNowTime() + ": " + ex);
+        }
     }
     
     protected void displayPopupMenu(java.awt.event.MouseEvent evt) {
@@ -1227,4 +1287,42 @@ public final class Operator {
         return salt;
     }
     
+    private void setDefaultFields(MainGUI.CardList card){
+        switch(card) {
+            case MENUS:
+                mainFrame.menuNameField.setEnabled(false);
+                mainFrame.menuTypeComboBox.setEnabled(false);
+                mainFrame.menuPriceField.setEnabled(false);
+                mainFrame.menuStockField.setEnabled(false);
+                mainFrame.menuDurationField.setEnabled(false);
+                mainFrame.menuDescriptionArea.setEnabled(false);
+                mainFrame.saveImageToFileMenuItem.setEnabled(false);
+                mainFrame.changeImageMenuItem.setEnabled(false);
+                mainFrame.deleteMenuButton.setEnabled(false);
+                mainFrame.saveChangesMenuButton.setEnabled(false);
+                mainFrame.menuIDField.setText("");
+                mainFrame.menuNameField.setText("");
+                mainFrame.menuTypeComboBox.setSelectedIndex(0);
+                mainFrame.menuPriceField.setValue(0);
+                mainFrame.currencyLabel.setText(this.getCurrency().getDescription());
+                mainFrame.menuStockField.setValue(0);
+                mainFrame.menuDurationField.setValue(0);
+                mainFrame.menuDescriptionArea.setText("");
+                displayImage(null);
+                break;
+            case TABLES:
+                mainFrame.tableNameField.setEnabled(false);
+                mainFrame.tableDescriptionArea.setEnabled(false);
+                mainFrame.deleteTableButton.setEnabled(false);
+                mainFrame.saveChangesTableButton.setEnabled(false);
+                mainFrame.tableIDField.setText("");
+                mainFrame.tableNameField.setText("");
+                mainFrame.tableDescriptionArea.setText("");
+                break;
+            default:
+                break;
+        }        
+        
+    }
+
 }

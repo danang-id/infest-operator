@@ -165,10 +165,8 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("INFEST: Operator Panel");
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/InfestIcon.png")).getImage());
-        setMaximumSize(new java.awt.Dimension(800, 660));
         setMinimumSize(new java.awt.Dimension(800, 660));
         setName("mainGUI"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(800, 660));
         setResizable(false);
 
         infestLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/jogjadamai/infest/assets/MainGUILogo.png"))); // NOI18N
@@ -259,6 +257,8 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         manageMenusPanel.setPreferredSize(new java.awt.Dimension(850, 500));
 
         manageMenusUpperPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Modify Menu"));
+        manageMenusUpperPanel.setMaximumSize(new java.awt.Dimension(745, 282));
+        manageMenusUpperPanel.setMinimumSize(new java.awt.Dimension(745, 282));
         manageMenusUpperPanel.setName("manageMenusUpperPanel"); // NOI18N
         manageMenusUpperPanel.setOpaque(false);
 
@@ -401,6 +401,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         menuDescriptionScrollPane.setDoubleBuffered(true);
 
         menuDescriptionArea.setColumns(20);
+        menuDescriptionArea.setLineWrap(true);
         menuDescriptionArea.setToolTipText("Set the description of the menu.");
         menuDescriptionArea.setWrapStyleWord(true);
         menuDescriptionArea.setDoubleBuffered(true);
@@ -527,11 +528,17 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                 .addGap(10, 10, 10))
         );
 
+        manageMenusLowerPanel.setMaximumSize(new java.awt.Dimension(745, 188));
+        manageMenusLowerPanel.setMinimumSize(new java.awt.Dimension(745, 188));
         manageMenusLowerPanel.setName("manageMenusLowerPanel"); // NOI18N
         manageMenusLowerPanel.setOpaque(false);
+        manageMenusLowerPanel.setPreferredSize(new java.awt.Dimension(745, 188));
 
         menusTableScrollPane.setToolTipText("List of menus.");
         menusTableScrollPane.setDoubleBuffered(true);
+        menusTableScrollPane.setMaximumSize(new java.awt.Dimension(735, 150));
+        menusTableScrollPane.setMinimumSize(new java.awt.Dimension(735, 150));
+        menusTableScrollPane.setPreferredSize(new java.awt.Dimension(735, 150));
 
         menusTable.setToolTipText("List of menus.");
         menusTable.setDoubleBuffered(true);
@@ -586,7 +593,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                         .addComponent(searchMenusButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(showAllMenusButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(menusTableScrollPane))
+                    .addComponent(menusTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5))
         );
         manageMenusLowerPanelLayout.setVerticalGroup(
@@ -598,7 +605,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                     .addComponent(searchMenusButton)
                     .addComponent(showAllMenusButton))
                 .addGap(5, 5, 5)
-                .addComponent(menusTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(menusTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5))
         );
 
@@ -609,8 +616,8 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
             .addGroup(manageMenusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(manageMenusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(manageMenusUpperPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(manageMenusLowerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(manageMenusUpperPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(manageMenusLowerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         manageMenusPanelLayout.setVerticalGroup(
@@ -619,7 +626,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                 .addGap(10, 10, 10)
                 .addComponent(manageMenusUpperPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
-                .addComponent(manageMenusLowerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(manageMenusLowerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
         );
 
@@ -655,6 +662,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
         tableDescriptionScrollPane.setDoubleBuffered(true);
 
         tableDescriptionArea.setColumns(20);
+        tableDescriptionArea.setLineWrap(true);
         tableDescriptionArea.setToolTipText("Type the description of the table.");
         tableDescriptionArea.setWrapStyleWord(true);
         tableDescriptionArea.setDoubleBuffered(true);
@@ -1052,16 +1060,16 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(manageMenusButton)
                         .addGap(15, 15, 15)
                         .addComponent(manageTablesButton)
                         .addGap(15, 15, 15)
                         .addComponent(financialStatementButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(titleLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(10, 10, 10)
+                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(infestLogoLabel))
                     .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 760, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20))
@@ -1078,7 +1086,7 @@ public final class MainGUI extends javax.swing.JFrame implements Runnable {
                             .addComponent(financialStatementButton))
                         .addGap(30, 30, 30))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(24, 24, 24)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(infestLogoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
